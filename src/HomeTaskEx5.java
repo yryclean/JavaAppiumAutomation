@@ -81,11 +81,11 @@ public class HomeTaskEx5 {
                 "Cannot find Add to list button",
                 2
         );
-//        waitForElementAndClick(
-//                By.xpath("//android.view.View[@resource-id=\"org.wikipedia:id/touch_outside\"]"),
-//                "Cannot create list",
-//                3
-//       );
+        waitForElementAndClick(
+                By.xpath("//android.view.View[@resource-id=\"org.wikipedia:id/touch_outside\"]"),
+                "Cannot create list",
+                3
+       );
         waitForElementAndClick(
                 By.xpath("//android.widget.EditText[@resource-id=\"org.wikipedia:id/text_input\"]"),
                 "Cannot find input bar",
@@ -186,6 +186,31 @@ public class HomeTaskEx5 {
         assertElementNotFound(
                 By.xpath("//*[@text=\"Style sheet language\"]"),
                 "Article is not deleted"
+        );
+        waitForElementPresent(
+                By.xpath("//*[@text=\"Java (programming language)\"]"),
+                "Article is missing",
+                10
+        );
+        waitForElementAndClick(
+                By.xpath("//*[@text=\"Java (programming language)\"]"),
+                "Can't open saved article",
+                10
+        );
+        waitForElementPresent(
+                By.xpath("//*[@text=\"Java (programming language)\"]"),
+                "No such title",
+                10
+        );
+
+        String actual_title = waitForElementAndGetText(
+                By.xpath("//*[@text=\"Java (programming language)\"]"),
+                "No such article title",
+                15
+        );
+        Assert.assertEquals(
+                "Java (programming language)",
+                actual_title
         );
     }
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
