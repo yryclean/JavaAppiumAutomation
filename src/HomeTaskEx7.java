@@ -5,15 +5,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Pause;
-import org.openqa.selenium.interactions.PointerInput;
-import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
-import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -34,16 +29,16 @@ public class HomeTaskEx7
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), capabilities);
 
+        ScreenOrientation orientation = driver.getOrientation();
+        if (orientation.equals(ScreenOrientation.LANDSCAPE)) {
+            driver.rotate(ScreenOrientation.PORTRAIT);
+        }
+
     }
 
     @After
     public void tearDown() {
-        ScreenOrientation orientation = driver.getOrientation();
-        System.out.println(orientation);
-        if (orientation.equals(ScreenOrientation.LANDSCAPE)) {
-            driver.rotate(ScreenOrientation.PORTRAIT);
-            System.out.println(orientation);
-        }
+
         driver.quit();
     }
 
