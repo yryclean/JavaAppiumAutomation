@@ -4,9 +4,6 @@ import lib.ui.ArticlePageObject;
 import lib.ui.OnboardingPageObject;
 import lib.ui.SearchPageObject;
 import org.junit.Test;
-import org.openqa.selenium.By;
-
-import static com.gargoylesoftware.htmlunit.WebAssert.assertElementPresent;
 
 public class HomeTaskEx6 extends CoreTestCase {
 
@@ -19,8 +16,6 @@ public class HomeTaskEx6 extends CoreTestCase {
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-
-
         ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
         ArticlePageObject.assertTitle();
     }
