@@ -1,7 +1,5 @@
 package lib.ui;
-
 import io.appium.java_client.AppiumDriver;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 
 public class SearchPageObject extends MainPageObject {
@@ -11,6 +9,7 @@ public class SearchPageObject extends MainPageObject {
         SEARCH_INPUT = "//*[@text='Search Wikipedia']",
             SEARCH_CANCEL_BUTTON = "org.wikipedia:id/search_close_btn",
     SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_description' and @text='{SUBSTRING}']",
+    SEARCH_RESULT_BY_TITLE_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/page_list_item_title' and @text='{SUBSTRING}']",
     SEARCH_RESULT_ARTICLES = "//*[@resource-id='org.wikipedia:id/search_results_list']",
     SEARCH_EMPTY_RESULT = "//*[@text='No results']",
     SEARCH_INPUT_PAGE = "org.wikipedia:id/search_empty_message";
@@ -24,6 +23,12 @@ public class SearchPageObject extends MainPageObject {
     {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
     }
+    public static String getResultSearchElementTitle(String substring)
+    {
+        return SEARCH_RESULT_BY_TITLE_SUBSTRING_TPL.replace("{SUBSTRING}", substring);
+    }
+
+
     /*TEMPLATES METHODS */
 
     public void initSearchInput()
@@ -90,5 +95,15 @@ public class SearchPageObject extends MainPageObject {
     {
         this.waitForElementPresent(By.id(SEARCH_INPUT_PAGE), "Search field is expected to be displayed", 10);
 
+    }
+    public void waitForSearchResultTitle(String substring)
+    {
+        String search_result_xpath = getResultSearchElementTitle(substring);
+        this.waitForElementPresent(By.xpath(search_result_xpath), "Can't find search result with substring " + substring, 5);
+    }
+    public void waitForElementByTitleAndDescription(String title, String description)
+    {
+        this.waitForSearchResultTitle(title);
+        this.waitForSearchResult(description);
     }
 }

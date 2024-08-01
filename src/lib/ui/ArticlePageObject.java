@@ -107,11 +107,9 @@ public class ArticlePageObject extends MainPageObject {
         );
     }
 
-
     public void assertTitle()
     {
         this.waitForElementPresent(By.xpath(TITLE), "Can't find article title", 0);
     }
-
 
 }

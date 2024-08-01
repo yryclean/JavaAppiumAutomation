@@ -4,6 +4,7 @@ import lib.CoreTestCase;
 import lib.ui.OnboardingPageObject;
 import lib.ui.SearchPageObject;
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 
 public class SearchTests extends CoreTestCase
 {
@@ -52,5 +53,17 @@ public class SearchTests extends CoreTestCase
         SearchPageObject.typeSearchLine("rfeurhguegerhughure");
         SearchPageObject.waitForEmptySearch();
         SearchPageObject.assertEmptySearchResult();
+    }
+    @Test
+    public void testSearchByArticleAndTitle()
+    {
+        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
+        OnboardingPageObject.skipOnboarding();
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.waitForElementByTitleAndDescription("Java", "Object-oriented programming language");
+        SearchPageObject.waitForElementByTitleAndDescription("Java", "Island in Indonesia");
+        SearchPageObject.waitForElementByTitleAndDescription("Java", "High-level programming language");
     }
 }
