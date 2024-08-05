@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 
 public class NavigationUI extends MainPageObject {
     private static final String
-    SAVED_LISTING = "//*[@content-desc='Saved']";
+    SAVED_LISTING = "xpath://*[@content-desc='Saved']";
     public NavigationUI(AppiumDriver driver)
     {
         super(driver);
@@ -13,7 +13,7 @@ public class NavigationUI extends MainPageObject {
         public void clickSavedList()
         {
             this.waitForElementAndClick(
-                    By.xpath(SAVED_LISTING),
+                    (SAVED_LISTING),
                     "Cannot find Saved button",
                     10
             );

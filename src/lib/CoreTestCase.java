@@ -24,7 +24,6 @@ public class CoreTestCase extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         this.getCapabilitiesByPlatformEnv();
-//      driver = new AndroidDriver(new URL(AppiumURL), capabilities);
         this.rotateScreenPortrait();
     }
 
