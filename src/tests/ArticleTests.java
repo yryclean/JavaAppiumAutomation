@@ -1,25 +1,30 @@
 package tests;
-
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.*;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MySavedListsPageObjectFactory;
+import lib.ui.factories.NavigationUIFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
+
 
 public class ArticleTests extends CoreTestCase
 {
+    private static final String name_of_folder = "My new folder";
     @Test
     public void testCompareArticleTitle() {
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
         assertEquals(
                 "Unexpected title!",
-                "Object-oriented programming language",
+                "Java (programming language)",
                 article_title
         );
 
@@ -27,55 +32,60 @@ public class ArticleTests extends CoreTestCase
 
     @Test
     public void testArticleSwipe() {
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
-        ArticlePageObject.scrollTo("Read more");
+        ArticlePageObject.scrollTo();
         ArticlePageObject.findArticleReadMore();
 
     }
     @Test
     public void testSaveFirstArticleToMyList() {
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        MySavedListsPageObject MySavedListsPageObject = MySavedListsPageObjectFactory.get(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
-        String article_page_title =  ArticlePageObject.getArticleTitle();
-        String name_of_folder = "My new folder";
         String article_title = ArticlePageObject.getArticleTitle();
         assertEquals(
                 "Unexpected title!",
-                "Object-oriented programming language",
+                "Java (programming language)",
                 article_title
         );
+
         ArticlePageObject.addArticleToMyList(name_of_folder);
         ArticlePageObject.closeArticle();
-        ArticlePageObject.closeArticle();
-        NavigationUI NavigationUI = new NavigationUI(driver);
-        NavigationUI.clickSavedList();
-        MySavedListsPageObject MySavedListsPageObject = new MySavedListsPageObject(driver);
-        MySavedListsPageObject.openFolderByName(name_of_folder);
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.closeArticle();
+        } else {
+            SearchPageObject.clickCancelSearch();
+        }
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        if (Platform.getInstance().isAndroid()) {
+            NavigationUI.clickSavedList();
+            MySavedListsPageObject.openFolderByName(name_of_folder);
+        } else {
+            NavigationUI.clickSavedList();
+            MySavedListsPageObject.closeSyncPopUp();
+        }
         MySavedListsPageObject.swipeArticleToDelete(article_title);
+
     }
+
     @Test
     public void testRotateSearchArticleBasic()
     {
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         String title_before_rotation = ArticlePageObject.getArticleTitle();
         this.rotateScreenLandscape();
         String title_after_rotation = ArticlePageObject.getArticleTitle();
@@ -96,14 +106,31 @@ public class ArticleTests extends CoreTestCase
     @Test
     public void testCheckArticleNameAfterBackground()
     {
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.waitForSearchResult("Object-oriented programming language");
         this.backgroundApp(2);
         SearchPageObject.waitForSearchResult("Object-oriented programming language");
     }
+
+    @Test
+    public void testSimpleAddTest() throws InterruptedException {
+        MySavedListsPageObject MySavedListsPageObject = MySavedListsPageObjectFactory.get(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
+        SearchPageObject.saveArticleForLaterSearchPage();
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        NavigationUI.clickSavedList();
+        MySavedListsPageObject.closeSyncPopUp();
+        MainPageObject MainPageObject = new MainPageObject(driver);
+        String locator = "xpath://XCUIElementTypeStaticText[@name='Flag of Japan']";
+        MainPageObject.swipeToTheLeft(locator);
+        String delete = "id:swipe action delete";
+        MainPageObject.waitForElementAndClick(delete, "Can't find delete button", 10);
+
+
+
+    }
 }
+
 

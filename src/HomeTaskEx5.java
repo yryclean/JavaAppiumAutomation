@@ -1,8 +1,12 @@
 
 import lib.CoreTestCase;
+import lib.Platform;
+import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MySavedListsPageObjectFactory;
+import lib.ui.factories.NavigationUIFactory;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 import lib.ui.SearchPageObject;
-import lib.ui.OnboardingPageObject;
 import lib.ui.ArticlePageObject;
 import lib.ui.NavigationUI;
 import lib.ui.MySavedListsPageObject;
@@ -13,43 +17,60 @@ public class HomeTaskEx5 extends CoreTestCase {
     @Test
     public void testSaveFirstArticleToMyList() {
 
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
 
         String name_of_folder = "My new folder";
         String article_title = ArticlePageObject.getArticleTitle();
         assertEquals(
                 "Unexpected title!",
-                "Object-oriented programming language",
+                "Java (programming language)",
                 article_title
         );
         ArticlePageObject.addArticleToMyList(name_of_folder);
         ArticlePageObject.closeArticle();
-        SearchPageObject.waitForCancelButtonToAppear();
-        SearchPageObject.clickCancelSearch();
-        SearchPageObject.waitForCancelButtonToDisappear();
-        SearchPageObject.typeSearchLine("CSS");
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.closeArticle();
+            SearchPageObject.waitForCancelButtonToDisappear();
+        } else {
+            SearchPageObject.clickCancelSearch();
+        }
+        SearchPageObject.initSearchInput();
+        String title2 = SearchPageObject.typeSearchLine("CSS");
         SearchPageObject.clickByArticleWithSubstring("Style sheet language");
-        ArticlePageObject.waitForTitleElement();
-        String second_article_title = ArticlePageObject.getArticleTitle();
-
+        ArticlePageObject.waitForArticleTitle(title2);
+            assertEquals(
+                    "Unexpected title!",
+                    "CSS",
+                    title2
+            );
         ArticlePageObject.addArticleToExistingList();
         ArticlePageObject.closeArticle();
-        ArticlePageObject.closeArticle();
-        NavigationUI NavigationUI = new NavigationUI(driver);
-        NavigationUI.clickSavedList();
-        MySavedListsPageObject MySavedListsPageObject = new MySavedListsPageObject(driver);
-        MySavedListsPageObject.openFolderByName(name_of_folder);
-
-        MySavedListsPageObject.swipeArticleToDelete(second_article_title);
-
-        MySavedListsPageObject.openArticleFromFolder(article_title);
-        ArticlePageObject.waitForTitleElement();
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.closeArticle();
+            SearchPageObject.waitForCancelButtonToDisappear();
+        } else {
+            SearchPageObject.clickCancelSearch();
+        }
+        MySavedListsPageObject MySavedListsPageObject = MySavedListsPageObjectFactory.get(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        if (Platform.getInstance().isAndroid()) {
+            NavigationUI.clickSavedList();
+            MySavedListsPageObject.openFolderByName(name_of_folder);
+            MySavedListsPageObject.swipeArticleToDelete(title2);
+            MySavedListsPageObject.openArticleFromFolder(article_title);
+            ArticlePageObject.waitForTitleElement();
+        } else {
+            NavigationUI.clickSavedList();
+            MySavedListsPageObject.closeSyncPopUp();
+            MySavedListsPageObject.swipeArticleToDelete(article_title);
+            ArticlePageObject.waitForArticleTitle(title2);
+            MySavedListsPageObject.openSavedArticle(title2);
+        }
     }
+
 }

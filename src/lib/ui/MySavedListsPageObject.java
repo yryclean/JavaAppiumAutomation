@@ -1,13 +1,19 @@
 package lib.ui;
-
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
+import lib.Platform;
 
-public class MySavedListsPageObject extends MainPageObject {
+abstract public class MySavedListsPageObject extends MainPageObject {
 
-    public static final String
-    FOLDER_BY_NAME_TPL = "xpath://*[@text='{FOLDER_NAME}']",
-    ARTICLE_BY_TITLE_TPL = "xpath://*[@text='{TITLE}']";
+    protected static String
+    FOLDER_BY_NAME_TPL,
+    ARTICLE_BY_TITLE_TPL,
+    CLOSE_SYNC_POPUP,
+    SWIPE_DELETE_BUTTON,
+    ARTICLE_TITLE,
+    ALERT_UNSAVE_ARTICLE,
+    ALERT_UNSAVE_BUTTON;
+
+
 
     private static String getFolderByXpathName(String name_of_folder)
     {
@@ -49,13 +55,25 @@ public class MySavedListsPageObject extends MainPageObject {
     }
     public void swipeArticleToDelete(String article_title)
     {
-        this.waitForArticleToAppearByTitle(article_title);
-        String article_xpath = getFolderByXpathName(article_title);
-        this.testSwipe(
-                (article_xpath),
-                "Cannot find saved article"
-        );
-        this.waitForArticleTitleToDisappear(article_title);
+        if (Platform.getInstance().isAndroid()) {
+            this.waitForArticleToAppearByTitle(article_title);
+            String article_xpath = getTitleByXpathName(article_title);
+            this.testSwipe(
+                    (article_xpath),
+                    "Cannot find saved article"
+            );
+            this.waitForArticleTitleToDisappear(article_xpath);
+        } else {
+            String article_xpath = getTitleByXpathName(article_title);
+            this.swipeToTheLeft(article_xpath);
+            this.waitForElementPresent(SWIPE_DELETE_BUTTON, "Can't find delete button", 10);
+            this.waitForElementAndClick(SWIPE_DELETE_BUTTON, "Can't click on delete button", 10);
+            this.waitForElementPresent(ALERT_UNSAVE_ARTICLE, "Alert not displayed", 10);
+            this.waitForElementAndClick(ALERT_UNSAVE_BUTTON, "Can't tap on the unsave alert button", 10);
+            this.waitForElementNotPresent(article_xpath, "Article is not expected to be displayed", 10);
+
+        }
+
     }
 
     public void openArticleFromFolder(String article_title)
@@ -67,5 +85,19 @@ public class MySavedListsPageObject extends MainPageObject {
                 5
         );
     }
+    public void closeSyncPopUp()
+    {
+        this.waitForElementAndClick(CLOSE_SYNC_POPUP, "Can't find close pop-up button", 10);
+    }
+
+    public void openSavedArticle(String article_title) {
+        String article_xpath = getTitleByXpathName(article_title);
+        this.waitForElementAndClick(
+                article_xpath,
+                "Cannot open saved list from folder",
+                5
+        );
+    }
+
 
 }

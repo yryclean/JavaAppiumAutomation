@@ -7,6 +7,7 @@ public class OnboardingPageObject extends MainPageObject {
     private final static String
     SKIP_BUTTON = "xpath://*[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']";
 
+
     public OnboardingPageObject(AppiumDriver driver)
     {
         super(driver);

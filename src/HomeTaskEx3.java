@@ -2,6 +2,7 @@
 import lib.CoreTestCase;
 import lib.ui.OnboardingPageObject;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 
@@ -12,7 +13,7 @@ public class HomeTaskEx3 extends CoreTestCase {
 
         OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
         OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Quality assurance");
         SearchPageObject.waitForCancelButtonToAppear();

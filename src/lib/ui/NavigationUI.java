@@ -3,9 +3,9 @@ package lib.ui;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 
-public class NavigationUI extends MainPageObject {
-    private static final String
-    SAVED_LISTING = "xpath://*[@content-desc='Saved']";
+abstract public class NavigationUI extends MainPageObject {
+    protected static String
+           SAVED_LISTING;
     public NavigationUI(AppiumDriver driver)
     {
         super(driver);

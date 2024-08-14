@@ -1,19 +1,18 @@
 package lib.ui;
 import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
 
-public class SearchPageObject extends MainPageObject {
+abstract public class SearchPageObject extends MainPageObject {
 
-    private static final String
-        SEARCH_INIT_ELEMENT = "xpath://*[@text='Search Wikipedia']",
-        SEARCH_INPUT = "xpath://*[@text='Search Wikipedia']",
-            SEARCH_CANCEL_BUTTON = "id:org.wikipedia:id/search_close_btn",
-    SEARCH_RESULT_BY_SUBSTRING_TPL = "xpath://*[@resource-id='org.wikipedia:id/page_list_item_description' and @text='{SUBSTRING}']",
-    SEARCH_RESULT_BY_TITLE_SUBSTRING_TPL = "xpath://*[@resource-id='org.wikipedia:id/page_list_item_title' and @text='{SUBSTRING}']",
-    SEARCH_RESULT_ARTICLES = "xpath://*[@resource-id='org.wikipedia:id/search_results_list']",
-    SEARCH_EMPTY_RESULT = "xpath://*[@text='No results']",
-    SEARCH_INPUT_PAGE = "id:org.wikipedia:id/search_empty_message";
-
+    protected static String
+        SEARCH_INIT_ELEMENT,
+        SEARCH_INPUT,
+            SEARCH_CANCEL_BUTTON,
+    SEARCH_RESULT_BY_SUBSTRING_TPL,
+    SEARCH_RESULT_BY_TITLE_SUBSTRING_TPL,
+    SEARCH_RESULT_ARTICLES,
+    SEARCH_EMPTY_RESULT,
+    SEARCH_INPUT_PAGE,
+    SEARCH_PAGE_SAVE_FOR_LATER_BUTTON;
     public SearchPageObject(AppiumDriver driver)
     {
         super(driver);
@@ -52,24 +51,25 @@ public class SearchPageObject extends MainPageObject {
 
     public void clickCancelSearch()
     {
-        waitForElementAndClick((SEARCH_CANCEL_BUTTON),"Can't find and click search cancel button", 5);
+        waitForElementAndClick((SEARCH_CANCEL_BUTTON),"Can't find and click search cancel button", 10);
     }
 
 
-    public void typeSearchLine(String search_line)
+    public String typeSearchLine(String search_line)
     {
-        this.waitForElementAndSendKeys((SEARCH_INPUT), search_line,5);
+        this.waitForElementAndSendKeys((SEARCH_INPUT), search_line,10);
 
+        return search_line;
     }
     public void waitForSearchResult(String substring)
     {
         String search_result_xpath = getResultSearchElement(substring);
-        this.waitForElementPresent((search_result_xpath), "Can't find search result with substring " + substring, 5);
+        this.waitForElementPresent((search_result_xpath), "Can't find search result with substring " + substring, 10);
     }
     public void clickByArticleWithSubstring(String substring)
     {
         String search_result_xpath = getResultSearchElement(substring);
-        this.waitForElementAndClick((search_result_xpath), "Can't find and click search result with substring " + substring, 5);
+        this.waitForElementAndClick((search_result_xpath), "Can't find and click search result with substring " + substring, 10);
     }
     public int getAmountOfFoundArticles() {
         this.waitForElementPresent(
@@ -85,7 +85,7 @@ public class SearchPageObject extends MainPageObject {
     }
     public void assertEmptySearchResult()
     {
-        this.assertElementNotFound((SEARCH_RESULT_ARTICLES), "No search results are expected");
+        this.assertElementNotFound((SEARCH_EMPTY_RESULT), "No search results are expected");
     }
     public void waitForSearchInput()
     {
@@ -105,5 +105,8 @@ public class SearchPageObject extends MainPageObject {
     {
         this.waitForSearchResultTitle(title);
         this.waitForSearchResult(description);
+    }
+    public void saveArticleForLaterSearchPage() {
+        this.waitForElementAndClick(SEARCH_PAGE_SAVE_FOR_LATER_BUTTON, "Can't find save for later button", 10);
     }
 }

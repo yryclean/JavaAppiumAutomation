@@ -1,19 +1,16 @@
 package tests;
 
 import lib.CoreTestCase;
-import lib.ui.OnboardingPageObject;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
-import org.openqa.selenium.WebElement;
 
 public class SearchTests extends CoreTestCase
 {
     @Test
     public void testSearch() {
 
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.waitForSearchResult("Object-oriented programming language");
@@ -21,9 +18,7 @@ public class SearchTests extends CoreTestCase
     @Test
     public void testCancelSearch() {
 
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.waitForCancelButtonToAppear();
@@ -32,9 +27,8 @@ public class SearchTests extends CoreTestCase
     }
     @Test
     public void testOfAmountNotEmptySearch() {
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         String search_input = "Linkin park discography";
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(search_input);
@@ -46,9 +40,8 @@ public class SearchTests extends CoreTestCase
     }
     @Test
     public void testAmountOfEmptySearch() {
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("rfeurhguegerhughure");
         SearchPageObject.waitForEmptySearch();
@@ -57,9 +50,8 @@ public class SearchTests extends CoreTestCase
     @Test
     public void testSearchByArticleAndTitle()
     {
-        OnboardingPageObject OnboardingPageObject = new OnboardingPageObject(driver);
-        OnboardingPageObject.skipOnboarding();
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
         SearchPageObject.waitForElementByTitleAndDescription("Java", "Object-oriented programming language");
